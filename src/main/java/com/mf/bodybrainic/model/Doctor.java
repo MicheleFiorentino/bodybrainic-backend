@@ -21,6 +21,9 @@ public class Doctor {
     @Column(nullable = false, length = 50)
     private String specialization;
 
+    @Column(nullable = false)
+    private String password;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)
