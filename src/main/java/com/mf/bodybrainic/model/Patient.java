@@ -21,6 +21,12 @@ public class Patient {
     @Column(nullable = false)
     private String medicalCondition;
 
+    @Column(nullable = false)
+    private Integer weight;
+
+    @Column(nullable = false)
+    private String country;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)

@@ -2,6 +2,7 @@ package com.mf.bodybrainic.service.impl;
 
 import com.mf.bodybrainic.model.Doctor;
 import com.mf.bodybrainic.model.dto.DoctorPersonDTO;
+import com.mf.bodybrainic.model.dto.HandlePasswordDTO;
 import com.mf.bodybrainic.repository.api.DoctorDAO;
 import com.mf.bodybrainic.service.api.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,19 @@ public class DoctorServiceImpl implements DoctorService {
             return null;
         }
     }
+
+    @Override
+    public DoctorPersonDTO updateDoctorPassword(HandlePasswordDTO handlePasswordDTO) {
+        Doctor doctor = doctorDAO.findById(handlePasswordDTO.getId()).orElse(null);
+
+        if (doctor != null) {
+            doctor.setPassword(handlePasswordDTO.getNewPassword());
+            doctor = doctorDAO.save(doctor);
+            return new DoctorPersonDTO(doctor, doctor.getPerson());
+        }
+
+        return null; // or throw an exception if doctor is not found
+    }
+
 
 }

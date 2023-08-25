@@ -31,4 +31,18 @@ public class PersonDTO {
         this.phoneNumber = person.getPhoneNumber();
         this.imagePath = person.getImagePath();
     }
+
+    public Person getPerson() {
+        Person person = new Person();
+        person.setFiscalCode(this.fiscalCode);
+        person.setName(this.name);
+        person.setSurname(this.surname);
+        person.setDateOfBirth(this.dateOfBirth);
+        person.setSex(this.sex);
+        person.setEmail(this.email);
+        person.setPhoneNumber(this.phoneNumber);
+        person.setImagePath(this.imagePath);
+        return person;
+    }
+
 }

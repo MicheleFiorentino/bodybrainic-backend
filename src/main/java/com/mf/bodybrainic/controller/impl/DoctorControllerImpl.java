@@ -2,7 +2,9 @@ package com.mf.bodybrainic.controller.impl;
 
 import com.mf.bodybrainic.controller.api.DoctorController;
 import com.mf.bodybrainic.model.dto.DoctorPersonDTO;
+import com.mf.bodybrainic.model.dto.HandlePasswordDTO;
 import com.mf.bodybrainic.service.api.DoctorService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -35,11 +37,11 @@ public class DoctorControllerImpl implements DoctorController {
     public ResponseEntity<DoctorPersonDTO> readDoctorById(@RequestParam Long id){
         DoctorPersonDTO dp = doctorService.getDoctorById(id);
         if(dp != null)
-            return ResponseEntity.ok().body(dp);
-        else
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(dp);
+        return ResponseEntity.notFound().build();
     }
 
+    //todo move business logic to service
     @Override
     @GetMapping(
             path="/avatarByPath",
@@ -61,4 +63,18 @@ public class DoctorControllerImpl implements DoctorController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Override
+    @PostMapping(path="/changePassword")
+    @ResponseBody
+    public ResponseEntity<DoctorPersonDTO> changeDoctorPassword(@RequestBody HandlePasswordDTO handlePasswordDTO) {
+        DoctorPersonDTO dpUpdated = doctorService.updateDoctorPassword(handlePasswordDTO);
+
+        if (dpUpdated != null) {
+            return ResponseEntity.ok(dpUpdated);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
