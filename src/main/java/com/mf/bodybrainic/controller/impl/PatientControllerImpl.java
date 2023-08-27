@@ -1,13 +1,17 @@
 package com.mf.bodybrainic.controller.impl;
 
 import com.mf.bodybrainic.controller.api.PatientController;
+import com.mf.bodybrainic.controller.impl.utils.sse.SSEUtil;
+import com.mf.bodybrainic.controller.impl.utils.sse.records.PatientSSESignal;
 import com.mf.bodybrainic.model.dto.PatientPersonDTO;
 import com.mf.bodybrainic.service.api.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,6 +25,8 @@ public class PatientControllerImpl implements PatientController {
     @Autowired
     private PatientService patientService;
 
+    @Autowired
+    private SSEUtil<PatientSSESignal> sseUtil;
 
     @Override
     @GetMapping(path="/all")
@@ -71,5 +77,19 @@ public class PatientControllerImpl implements PatientController {
         return ResponseEntity.ok().body(patList);
     }
 
+    @GetMapping(path="/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<PatientSSESignal>> subscribeToSSE() {
+        return sseUtil.subscribe();
+    }
 
+    @PostMapping("/patientAdded")
+    public ResponseEntity<String> patientCritical(@RequestParam Integer id){
+        try {
+            PatientSSESignal signal = new PatientSSESignal(id);
+            sseUtil.emitSignal(new PatientSSESignal(id));
+            return ResponseEntity.ok("patient_added");
+        } catch (Error e) {
+            return ResponseEntity.badRequest().body(e.toString());
+        }
+    }
 }
